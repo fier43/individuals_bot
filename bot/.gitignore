@@ -1,0 +1,5 @@
+.venv
+.env
+media/*.png
+media/*.jpg
+*.db

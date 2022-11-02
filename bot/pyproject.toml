@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "bot"
+version = "0.1.0"
+description = ""
+authors = ["Gennadiy Zubkov <gena-zub96@mail.ru>"]
+license = "GPL-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pytelegrambotapi = "^4.7.1"
+python-dotenv = "^0.21.0"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.10.0"
+flake8 = "^5.0.4"
+mypy = "^0.982"
+pylint = "^2.15.5"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.2.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+bot = "bot.main:start"
