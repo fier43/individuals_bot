@@ -35,9 +35,6 @@ from .constants import *
 from .db import cur
 from .filters import IsInAdminList
 
-from models import Girl, User
-
-
 bot = TeleBot(BOT_API_KEY)
 
 # Кастомные фильтры сообщений.
