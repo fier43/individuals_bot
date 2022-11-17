@@ -27,3 +27,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 bot = "bot.main:start"
+
+# [tool.poetry.scripts]
+# radio = "radiorecord.radiorecord:main"

@@ -485,7 +485,7 @@ def chenge_status_busy(message):
             "Произошла ошибка.",
         )
 
-    con.commit()
+    cur.commit()
 
 
 @bot.message_handler(func=lambda msg: msg.text == FREE, admins=ADMINS)
@@ -518,7 +518,7 @@ def chenge_status_free(message):
             "Произошла ошибка.",
         )
 
-    con.commit()
+    cur.commit()
 
 
 def start():
