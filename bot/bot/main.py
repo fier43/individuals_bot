@@ -32,7 +32,7 @@ from telebot.custom_filters import StateFilter
 
 # Статические (неизменяемые) переменные из файла constants.py
 from .constants import *
-from .db import cur
+from .db import *
 from .filters import IsInAdminList
 
 bot = TeleBot(BOT_API_KEY)

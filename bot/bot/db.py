@@ -45,4 +45,7 @@ except sqlite3.Error as error:
     exit(1)
 
 
-__all__ = ["cur"]
+__all__ = [
+    "cur",
+    "con",
+]
