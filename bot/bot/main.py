@@ -34,6 +34,9 @@ from telebot.custom_filters import StateFilter
 from .constants import *
 from .db import *
 from .filters import IsInAdminList
+from time import sleep
+import requests
+import urllib.request
 
 bot = TeleBot(BOT_API_KEY)
 
@@ -143,6 +146,22 @@ def welcome(message):
             parse_mode="html",
             reply_markup=markup,
         )
+
+
+# @bot.message_handler(content_types=["photo"])
+# def handle_docs_audio(message):
+#     photo_id = message.photo.file_id
+#     file_info = bot.get_file(photo_id)
+#     urllib.request.urlretrieve(
+#         f"http://api.telegram.org/file/bot{config.token}/{file_info.file_path}",
+#         file_info.file_path,
+#     )
+
+
+# @bot.message_handler(func=lambda msg: msg.text == "photo")
+# def photo_output(message):
+#     file = open("media/girl_photo.png", "rb")
+#     bot.send_photo(message.chat.id, file)
 
 
 @bot.message_handler(func=lambda msg: msg.text == ADD_ADMIN, admins=ADMINS)
@@ -485,7 +504,7 @@ def chenge_status_busy(message):
             "Произошла ошибка.",
         )
 
-    cur.commit()
+    con.commit()
 
 
 @bot.message_handler(func=lambda msg: msg.text == FREE, admins=ADMINS)
@@ -518,11 +537,16 @@ def chenge_status_free(message):
             "Произошла ошибка.",
         )
 
-    cur.commit()
+    con.commit()
 
 
 def start():
-    bot.polling(none_stop=True, interval=0)
+    while True:
+        try:
+            bot.polling(none_stop=True, interval=0)
+        except requests.exceptions.ConnectionError as _ex:
+            print(_ex)
+            sleep(15)
 
 
 # RUN
