@@ -31,9 +31,9 @@ from telebot import types, TeleBot
 from telebot.custom_filters import StateFilter
 
 # Статические (неизменяемые) переменные из файла constants.py
-from .constants import *
-from .db import *
-from .filters import IsInAdminList
+from bot.constants import *
+from bot.db import *
+from bot.filters import IsInAdminList
 from time import sleep
 import requests
 import urllib.request
@@ -148,20 +148,31 @@ def welcome(message):
         )
 
 
-# @bot.message_handler(content_types=["photo"])
-# def handle_docs_audio(message):
-#     photo_id = message.photo.file_id
-#     file_info = bot.get_file(photo_id)
-#     urllib.request.urlretrieve(
-#         f"http://api.telegram.org/file/bot{config.token}/{file_info.file_path}",
-#         file_info.file_path,
-#     )
+def uniq_file_maker(file: str) -> str:
+    """Create a unique file path"""
+    # get file name and extension
+    filename, filext = os.path.splitext(os.path.basename(file))
+    # get file directory path
+    directory = os.path.dirname(file)
+    # get file without extension only
+    filexx = str(directory + os.sep + filename)
+    # check if file exists
+    if Path(file).exists():
+        # create incrementing variable
+        i = 1
+        # determine incremented filename
+        while os.path.exists(f"{filexx} ({str(i)}){filext}"):
+            # update the incrementing variable
+            i += 1
+        # update file name with incremented variable
+        filename = directory + os.sep + filename + " (" + str(i) + ")" + filext
+    return filename
 
 
-# @bot.message_handler(func=lambda msg: msg.text == "photo")
-# def photo_output(message):
-#     file = open("media/girl_photo.png", "rb")
-#     bot.send_photo(message.chat.id, file)
+@bot.message_handler(func=lambda msg: msg.text == "photo")
+def photo_output(message):
+    file = open("media/girl_photo.png", "rb")
+    bot.send_photo(message.chat.id, file)
 
 
 @bot.message_handler(func=lambda msg: msg.text == ADD_ADMIN, admins=ADMINS)
@@ -249,14 +260,12 @@ def add_girl_button_handler(message):
 @bot.message_handler(state="enter_id", admins=ADMINS)
 def girl_id_handler(message):
     if re.match(r"^\d+$", message.text):
-        # Предварительное сохранение возраста.
+        # Предварительное сохранение ID.
         bot.add_data(message.from_user.id, girl_id=int(message.text))
 
-        data = {}
+        bot.set_state(message.from_user.id, "add_photo")
 
-        bot.set_state(message.from_user.id, "enter_name")
-
-        bot.send_message(message.from_user.id, "Напиши Имя")
+        bot.send_message(message.from_user.id, "Добавте фотографию")
     else:
         bot.send_message(
             message.from_user.id,
@@ -267,6 +276,26 @@ def girl_id_handler(message):
             ),
         )
         bot.send_message(message.from_user.id, "Ввидите ID пользователя")
+
+
+@bot.message_handler(state="add_photo", content_types=["photo"])
+def photo(message):
+    data = bot.retrieve_data(message.from_user.id)
+    print("message.photo =", message.photo)
+    fileID = message.photo[-1].file_id
+    print("fileID =", fileID)
+    file_info = bot.get_file(fileID)
+    print("file.file_path =", file_info.file_path)
+    downloaded_file = bot.download_file(file_info.file_path)
+    # "uploads/image.jpg"
+    file_name = "uploads/{0}.jpg".format(data.data["girl_id"])
+    print(file_name)
+    with open(file_name, "wb") as new_file:
+        new_file.write(downloaded_file)
+
+    bot.set_state(message.from_user.id, "enter_name")
+
+    bot.send_message(message.from_user.id, "Напиши Имя")
 
 
 @bot.message_handler(state="enter_name", admins=ADMINS)

@@ -10,8 +10,6 @@ python = "^3.11"
 pytelegrambotapi = "^4.7.1"
 python-dotenv = "^0.21.0"
 
-[tool.poetry.dev-dependencies]
-
 [tool.poetry.group.dev.dependencies]
 black = "^22.10.0"
 flake8 = "^5.0.4"
