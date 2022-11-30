@@ -148,27 +148,6 @@ def welcome(message):
         )
 
 
-def uniq_file_maker(file: str) -> str:
-    """Create a unique file path"""
-    # get file name and extension
-    filename, filext = os.path.splitext(os.path.basename(file))
-    # get file directory path
-    directory = os.path.dirname(file)
-    # get file without extension only
-    filexx = str(directory + os.sep + filename)
-    # check if file exists
-    if Path(file).exists():
-        # create incrementing variable
-        i = 1
-        # determine incremented filename
-        while os.path.exists(f"{filexx} ({str(i)}){filext}"):
-            # update the incrementing variable
-            i += 1
-        # update file name with incremented variable
-        filename = directory + os.sep + filename + " (" + str(i) + ")" + filext
-    return filename
-
-
 @bot.message_handler(func=lambda msg: msg.text == "photo")
 def photo_output(message):
     file = open("media/girl_photo.png", "rb")
@@ -281,11 +260,11 @@ def girl_id_handler(message):
 @bot.message_handler(state="add_photo", content_types=["photo"])
 def photo(message):
     data = bot.retrieve_data(message.from_user.id)
-    print("message.photo =", message.photo)
+    # print("message.photo =", message.photo)
     fileID = message.photo[-1].file_id
-    print("fileID =", fileID)
+    # print("fileID =", fileID)
     file_info = bot.get_file(fileID)
-    print("file.file_path =", file_info.file_path)
+    # print("file.file_path =", file_info.file_path)
     downloaded_file = bot.download_file(file_info.file_path)
     # "uploads/image.jpg"
     file_name = "uploads/{0}.jpg".format(data.data["girl_id"])
@@ -399,6 +378,10 @@ def add_girl_button_handler(message):
     girls = res.fetchall()
 
     for girl in girls:
+
+        file = open("uploads/{0}.jpg".format(*girl), "rb")
+        bot.send_photo(message.chat.id, file)
+
         bot.send_message(
             message.from_user.id,
             "ID: {0}\nИмя: {1}\nВозраст: {2}\nСтатус: {3}".format(*girl),
@@ -415,6 +398,9 @@ def add_girl_button_handler(message):
 
     for girl in girls:
         if girl[3] == "Свободна":
+            file = open("uploads/{0}.jpg".format(*girl), "rb")
+            bot.send_photo(message.chat.id, file)
+
             bot.send_message(
                 message.from_user.id,
                 "ID: {0}\nИмя: {1}\nВозраст: {2}\nСтатус: {3}".format(*girl),
