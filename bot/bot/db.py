@@ -4,7 +4,7 @@ from pathlib import Path
 
 # Подключение к базе данных.
 try:
-    con = sqlite3.connect(Path("individual.db"), check_same_thread=False)
+    con = sqlite3.connect(Path("records.db"), check_same_thread=False)
 except sqlite3.Error as error:
     print("Ошибка при подключении к sqlite", error)
 
@@ -16,24 +16,24 @@ cur = con.cursor()
 try:
     cur.execute(
         """
-        CREATE TABLE IF NOT EXISTS girls
+        CREATE TABLE IF NOT EXISTS admins
         (
-            telegram_id INTEGER,
-            first_name TEXT,
-            age INTEGER,
-            status TEXT
+            telegram_id     INTEGER,
+            first_name      TEXT,
+            account_type	INTEGER NOT NULL
         );
         """
     )
 
     cur.execute(
         """
-        CREATE TABLE IF NOT EXISTS user (
-            id	            INTEGER,
-            telegram_id	    INTEGER NOT NULL,
-            first_name	    TEXT NOT NULL,
-            account_type	INTEGER NOT NULL,
-            PRIMARY KEY("id" AUTOINCREMENT)
+        CREATE TABLE IF NOT EXISTS girls
+        (
+            data	        INTEGER NOT NULL,
+            time	        INTEGER NOT NULL,
+            phone	        INTEGER,
+            name	        TEXT NOT NULL,
+            comment	        TEXT
         );
         """
     )
